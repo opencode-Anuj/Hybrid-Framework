@@ -1,6 +1,8 @@
 package tests;
 
 import base.BaseTest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -14,6 +16,7 @@ import utils.ConfigReader;
 public class LoginTest extends BaseTest {
 
     private LoginPage loginPage;
+    private Logger log = LogManager.getLogger(LoginTest.class);
 
     @BeforeMethod
     public void setupLoginPage() {
@@ -25,9 +28,11 @@ public class LoginTest extends BaseTest {
      */
     @Test
     public void validLoginTest() {
+        log.info("Starting validLoginTest.");
         loginPage.login(ConfigReader.getProperty("username"), ConfigReader.getProperty("password"));
 
         // Verify that the user has successfully logged in by checking the presence of an inventory item.
         Assert.assertTrue(loginPage.isElementDisplayed(By.id("inventory_container")), "Login failed: Inventory container not found.");
+        log.info("Login successful. Inventory container is displayed.");
     }
 }
