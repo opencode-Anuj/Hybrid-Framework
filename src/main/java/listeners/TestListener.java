@@ -4,18 +4,20 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-
 import base.BaseTest;
-
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
+import org.testng.IAnnotationTransformer;
 import org.testng.ITestResult;
+import org.testng.annotations.ITestAnnotation;
 import reports.ExtentManager;
+import utils.ScreenshotUtils;
 
-public class TestListener implements ITestListener {
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+import org.testng.ITestListener;
+
+public class TestListener implements ITestListener, IAnnotationTransformer {
 
     private ExtentReports extent = ExtentManager.getInstance();
     public static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
@@ -35,11 +37,14 @@ public class TestListener implements ITestListener {
     public void onTestFailure(ITestResult result) {
         test.get().log(Status.FAIL, "Test Failed: " + result.getThrowable());
 
-        // Capture screenshot and attach to the report.
-        WebDriver driver = BaseTest.getDriver(); // Use the static method.
+        WebDriver driver = BaseTest.getDriver();
         if (driver != null) {
-            String base64Screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
-            test.get().fail("Test Failed", MediaEntityBuilder.createScreenCaptureFromBase64String(base64Screenshot).build());
+            String screenshotPath = ScreenshotUtils.captureScreenshot(driver, result.getName());
+            if (screenshotPath != null) {
+                test.get().fail("Test Failed", MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+            } else {
+                test.get().fail("Test Failed, but screenshot capture failed.");
+            }
         } else {
             test.get().fail("Test Failed, but WebDriver was null.");
         }
@@ -51,7 +56,12 @@ public class TestListener implements ITestListener {
     }
 
     @Override
-    public void onFinish(ITestContext context) {
+    public void onFinish(org.testng.ITestContext context) {
         extent.flush();
+    }
+
+    @Override
+    public void transform(ITestAnnotation annotation, Class testClass, Constructor testConstructor, Method testMethod) {
+        annotation.setRetryAnalyzer(RetryAnalyzer.class);
     }
 }

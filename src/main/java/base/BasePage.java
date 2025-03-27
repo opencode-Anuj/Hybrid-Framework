@@ -1,4 +1,4 @@
-package base;
+package base; // src/main/java/base/BasePage.java
 
 import com.aventstack.extentreports.Status;
 import listeners.TestListener;
@@ -14,9 +14,10 @@ import org.openqa.selenium.TimeoutException;
 import constants.FrameworkConstants;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
- * BasePage class provides common methods for interacting with web elements.
+ * BasePage class provides common methods for interacting with web elements with enhanced wait strategies.
  */
 public class BasePage {
 
@@ -33,7 +34,6 @@ public class BasePage {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(FrameworkConstants.EXPLICIT_WAIT));
     }
-
     /**
      * Waits for an element to be visible.
      *
@@ -94,7 +94,6 @@ public class BasePage {
             throw e;
         }
     }
-
     /**
      * Sends keys to an element.
      *
@@ -134,6 +133,61 @@ public class BasePage {
             log.warn("Element not found: " + locator);
             TestListener.test.get().log(Status.WARNING, "Element not found: " + locator);
             return false;
+        }
+    }
+
+    /**
+     * Waits for an element to be invisible.
+     *
+     * @param locator By locator of the element.
+     * @throws TimeoutException if the element is still visible after the specified time.
+     */
+    public void waitForElementToBeInvisible(By locator) {
+        try {
+            log.info("Waiting for element to be invisible: " + locator);
+            TestListener.test.get().log(Status.INFO, "Waiting for element to be invisible: " + locator);
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+        } catch (TimeoutException e) {
+            log.error("Timeout waiting for element to be invisible: " + locator, e);
+            TestListener.test.get().log(Status.FAIL, "Timeout waiting for element to be invisible: " + locator + " Exception: " + e);
+            throw e;
+        }
+    }
+    /**
+     * Waits for the presence of all elements located by the given locator.
+     *
+     * @param locator By locator of the elements.
+     * @return List of WebElements if found.
+     * @throws TimeoutException if the elements are not found within the specified time.
+     */
+    public List<WebElement> waitForPresenceOfAllElements(By locator) {
+        try {
+            log.info("Waiting for presence of all elements: " + locator);
+            TestListener.test.get().log(Status.INFO, "Waiting for presence of all elements: " + locator);
+            return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+        } catch (TimeoutException e) {
+            log.error("Timeout waiting for presence of all elements: " + locator, e);
+            TestListener.test.get().log(Status.FAIL, "Timeout waiting for presence of all elements: " + locator + " Exception: " + e);
+            throw e;
+        }
+    }
+
+    /**
+     * Waits for the text to be present in the element.
+     *
+     * @param locator By locator of the element.
+     * @param text    The text to wait for.
+     * @throws TimeoutException if the text is not present within the specified time.
+     */
+    public void waitForTextToBePresentInElement(By locator, String text) {
+        try {
+            log.info("Waiting for text '" + text + "' to be present in element: " + locator);
+            TestListener.test.get().log(Status.INFO, "Waiting for text '" + text + "' to be present in element: " + locator);
+            wait.until(ExpectedConditions.textToBePresentInElementLocated(locator, text));
+        } catch (TimeoutException e) {
+            log.error("Timeout waiting for text '" + text + "' to be present in element: " + locator, e);
+            TestListener.test.get().log(Status.FAIL, "Timeout waiting for text '" + text + "' to be present in element: " + locator + " Exception: " + e);
+            throw e;
         }
     }
 }
