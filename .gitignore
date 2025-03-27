@@ -33,3 +33,5 @@ target/
 out/
 bin/
 .gitattributes
+reports/
+screenshots/
