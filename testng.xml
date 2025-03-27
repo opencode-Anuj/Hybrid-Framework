@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="SauceDemo Test Suite">
+<suite name="TestSuite" parallel="tests" thread-count="5">
     <listeners>
         <listener class-name="listeners.TestListener"/>
     </listeners>
-    <test name="Login Tests">
-        <classes>
+    <test name="LoginTest">
+        <parameter name="browser" value="chrome"/> <classes>
             <class name="tests.LoginTest"/>
         </classes>
     </test>
