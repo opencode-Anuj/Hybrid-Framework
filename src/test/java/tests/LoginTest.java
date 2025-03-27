@@ -29,10 +29,15 @@ public class LoginTest extends BaseTest {
     @Test
     public void validLoginTest() {
         log.info("Starting validLoginTest.");
-        loginPage.login(ConfigReader.getProperty("username"), ConfigReader.getProperty("password"));
+        try {
+            loginPage.login(ConfigReader.getProperty("username"), ConfigReader.getProperty("password"));
 
-        // Verify that the user has successfully logged in by checking the presence of an inventory item.
-        Assert.assertTrue(loginPage.isElementDisplayed(By.id("inventory_container")), "Login failed: Inventory container not found.");
-        log.info("Login successful. Inventory container is displayed.");
+            // Verify that the user has successfully logged in by checking the presence of an inventory item.
+            Assert.assertTrue(loginPage.isElementDisplayed(By.id("inventory_container")), "Login failed: Inventory container not found.");
+            log.info("Login successful. Inventory container is displayed.");
+        } catch (Exception e) {
+            log.error("Login test failed: " + e.getMessage(), e);
+            Assert.fail("Login test failed: " + e.getMessage());
+        }
     }
 }
