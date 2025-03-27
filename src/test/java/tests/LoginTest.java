@@ -2,7 +2,6 @@ package tests;
 
 import base.BaseTest;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -29,7 +28,6 @@ public class LoginTest extends BaseTest {
         loginPage.login(ConfigReader.getProperty("username"), ConfigReader.getProperty("password"));
 
         // Verify that the user has successfully logged in by checking the presence of an inventory item.
-        WebElement inventoryContainer = driver.findElement(By.id("inventory_container"));
-        Assert.assertTrue(inventoryContainer.isDisplayed(), "Login failed: Inventory container not found.");
+        Assert.assertTrue(loginPage.isElementDisplayed(By.id("inventory_container")), "Login failed: Inventory container not found.");
     }
 }
