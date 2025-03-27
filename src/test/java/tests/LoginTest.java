@@ -1,6 +1,9 @@
 package tests;
 
+// LoginTest.java (Updated)
 import io.github.bonigarcia.wdm.WebDriverManager;
+import pages.LoginPage;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,37 +14,32 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * A simple TestNG class to perform a valid login test on saucedemo.com.
+ * A simple TestNG class to perform a valid login test on saucedemo.com using Page Object Model.
  */
 public class LoginTest {
 
     private WebDriver driver;
     private final String SAUCEDEMO_URL = "https://www.saucedemo.com/";
+    private LoginPage loginPage;
 
     /**
-     * Sets up the WebDriver before each test method.
+     * Sets up the WebDriver and initializes the LoginPage object before each test method.
      */
     @BeforeMethod
     public void setUp() {
-        WebDriverManager.chromedriver().setup(); // Use WebDriverManager for easy driver setup
+        WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
-        driver.manage().window().maximize(); // Maximize the browser window
-        driver.get(SAUCEDEMO_URL); // Navigate to the saucedemo URL
+        driver.manage().window().maximize();
+        driver.get(SAUCEDEMO_URL);
+        loginPage = new LoginPage(driver); // Initialize the LoginPage
     }
 
     /**
-     * Tests the login functionality with valid credentials.
+     * Tests the login functionality with valid credentials using the LoginPage object.
      */
     @Test
     public void validLoginTest() {
-        // Find the username and password input fields and enter valid credentials
-        WebElement usernameField = driver.findElement(By.id("user-name"));
-        WebElement passwordField = driver.findElement(By.id("password"));
-        WebElement loginButton = driver.findElement(By.id("login-button"));
-
-        usernameField.sendKeys("standard_user");
-        passwordField.sendKeys("secret_sauce");
-        loginButton.click();
+        loginPage.login("standard_user", "secret_sauce");
 
         // Verify that the user has successfully logged in by checking the presence of an inventory item.
         WebElement inventoryContainer = driver.findElement(By.id("inventory_container"));
@@ -54,7 +52,7 @@ public class LoginTest {
     @AfterMethod
     public void tearDown() {
         if (driver != null) {
-            driver.quit(); // Close the browser
+            driver.quit();
         }
     }
 }
