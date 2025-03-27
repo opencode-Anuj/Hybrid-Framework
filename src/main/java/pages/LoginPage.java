@@ -1,6 +1,8 @@
 package pages;
 
 import base.BasePage;
+import com.aventstack.extentreports.Status;
+import listeners.TestListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -19,16 +21,19 @@ public class LoginPage extends BasePage {
 
     public void enterUsername(String username) {
         log.info("Entering username: " + username);
+        TestListener.test.get().log(Status.INFO, "Entering username: " + username);
         sendKeys(usernameField, username);
     }
 
     public void enterPassword(String password) {
         log.info("Entering password.");
+        TestListener.test.get().log(Status.INFO, "Entering password.");
         sendKeys(passwordField, password);
     }
 
     public void clickLoginButton() {
         log.info("Clicking login button.");
+        TestListener.test.get().log(Status.INFO, "Clicking login button.");
         clickElement(loginButton);
     }
 

@@ -1,6 +1,8 @@
 package tests;
 
 import base.BaseTest;
+import com.aventstack.extentreports.Status;
+import listeners.TestListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -29,14 +31,17 @@ public class LoginTest extends BaseTest {
     @Test
     public void validLoginTest() {
         log.info("Starting validLoginTest.");
+        TestListener.test.get().log(Status.INFO, "Starting validLoginTest.");
         try {
             loginPage.login(ConfigReader.getProperty("username"), ConfigReader.getProperty("password"));
 
             // Verify that the user has successfully logged in by checking the presence of an inventory item.
             Assert.assertTrue(loginPage.isElementDisplayed(By.id("inventory_container")), "Login failed: Inventory container not found.");
             log.info("Login successful. Inventory container is displayed.");
+            TestListener.test.get().log(Status.PASS, "Login successful. Inventory container is displayed.");
         } catch (Exception e) {
             log.error("Login test failed: " + e.getMessage(), e);
+            TestListener.test.get().log(Status.FAIL, "Login test failed: " + e.getMessage());
             Assert.fail("Login test failed: " + e.getMessage());
         }
     }

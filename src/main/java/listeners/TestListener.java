@@ -11,7 +11,7 @@ import reports.ExtentManager;
 public class TestListener implements ITestListener {
 
     private ExtentReports extent = ExtentManager.getInstance();
-    private ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+    public static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     @Override
     public void onTestStart(ITestResult result) {
