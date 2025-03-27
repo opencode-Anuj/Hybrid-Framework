@@ -6,6 +6,7 @@ import listeners.TestListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,9 +20,11 @@ public class LoginTest extends BaseTest {
 
     private LoginPage loginPage;
     private Logger log = LogManager.getLogger(LoginTest.class);
+    private WebDriver driver;
 
     @BeforeMethod
     public void setupLoginPage() {
+        driver = BaseTest.driver.get(); // Get WebDriver from ThreadLocal
         loginPage = new LoginPage(driver);
     }
 

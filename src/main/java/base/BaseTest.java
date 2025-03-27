@@ -11,11 +11,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import utils.ConfigReader;
 
+import java.time.Duration;
+
 public class BaseTest {
 
-    protected WebDriver driver;
+    private Logger log = LogManager.getLogger(BaseTest.class);
+    public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     protected String baseUrl;
-    protected Logger log = LogManager.getLogger(BaseTest.class);
 
     @BeforeMethod
     public void setUp() {
@@ -29,33 +31,38 @@ public class BaseTest {
         switch (browser.toLowerCase()) {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                driver.set(new ChromeDriver()); // Assign to ThreadLocal first
                 break;
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
+                driver.set(new FirefoxDriver()); // Assign to ThreadLocal first
                 break;
             case "safari":
                 WebDriverManager.safaridriver().setup();
-                driver = new SafariDriver();
+                driver.set(new SafariDriver()); // Assign to ThreadLocal first
                 break;
             default:
                 log.warn("Invalid browser specified. Defaulting to Chrome.");
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                driver.set(new ChromeDriver()); // Assign to ThreadLocal first
         }
 
-        driver.manage().window().maximize();
+        driver.get().manage().window().maximize();
         baseUrl = ConfigReader.getProperty("baseUrl");
-        driver.get(baseUrl);
+        driver.get().get(baseUrl);
         log.info("Navigated to: " + baseUrl);
     }
 
     @AfterMethod
     public void tearDown() {
-        if (driver != null) {
+        if (driver.get() != null) {
             log.info("Closing the WebDriver.");
-            driver.quit();
+            driver.get().quit();
+            driver.remove();
         }
+    }
+    // Add this static method to access the WebDriver instance.
+    public static WebDriver getDriver() {
+        return driver.get();
     }
 }
